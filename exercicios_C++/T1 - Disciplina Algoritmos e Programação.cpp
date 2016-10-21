@@ -57,3 +57,4 @@ main(){
 	}
 }while (sair==0);
 }
+//teste de commit neste codigo
