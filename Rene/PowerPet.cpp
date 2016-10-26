@@ -95,12 +95,12 @@ int main()
             temp = 'x';
             
             fflush(stdin);
-            fpurge(stdin);
+           // fpurge(stdin);
             
             break;
         }
         case 0:
-            system("clear");
+            system("cls");
             printf("Tchau!!!\n\n");
             break;
         }
