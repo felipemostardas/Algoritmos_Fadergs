@@ -11,12 +11,12 @@ main(){
 	float chico=1.50,ze=1.10;
 	int ano=0;
 	
-    while (ze<chico)
-    {	
+    do{	
+    if (ze<chico){
 		chico=chico+0.02;
 		ze=ze+0.03;
 		ano++;
-	getch ();
 	}
+	}while (chico>ze);
 	printf ("para ze ser maior que chico levou %i anos",ano);
 }

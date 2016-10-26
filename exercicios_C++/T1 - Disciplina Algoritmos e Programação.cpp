@@ -6,7 +6,7 @@
 main(){
 	setlocale(LC_ALL,"portuguese");
 	int sair=0,senha=0,tent_senha=0,menu=0,pesopet=0,produto=0,itens=0,vetnota[5]={0,0,0,0,0};
-	int contcompra=0;
+	char contcompra;
 	int banhotosa=0,totalnota=0;
 	do{	
 	printf ("\n Digite senha:  ");
@@ -46,7 +46,7 @@ main(){
 						printf ("\n valor do Banho e tosa é %i\n\n\n",banhotosa);
 					break;
 				case 2:
-					//do{
+					do{
 					system("cls");
 					printf ("\n *******    Escolha o Produto Para Compra     *******");
 					printf ("\n 1. RAÇÃO PARA GATOS 2KG_____________________R$ 10,00");	
@@ -59,9 +59,11 @@ main(){
 					scanf ("%i",&itens);
 					vetnota[produto]=itens+vetnota[produto];
 					printf("\n\n Produto comprado com sucesso \n");
-					//printf("\n deseja continuar comprando 1=s 2=n \n");
-					//scanf("%i",contcompra);
-					//} while (contcompra==1);
+					printf("\n deseja continuar comprando S/N \n");
+					fflush(stdin);
+					scanf("%c",contcompra);
+					//contcompra = toupper(contcompra);
+					} while (contcompra=='S');
 					
 					break;
 				case 3:
