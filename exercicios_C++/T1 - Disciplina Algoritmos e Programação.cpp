@@ -61,10 +61,10 @@ main(){
 					printf("\n\n Produto comprado com sucesso \n");
 					printf("\n deseja continuar comprando S/N \n");
 					fflush(stdin);
-					scanf("%c",contcompra);
+					scanf("%c",&contcompra);
 					//contcompra = toupper(contcompra);
-					} while (contcompra=='S');
-					
+					} while (contcompra!='N');
+					system("cls");
 					break;
 				case 3:
 					totalnota=totalnota+(10*vetnota[1]);
