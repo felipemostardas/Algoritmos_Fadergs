@@ -2,10 +2,14 @@
 #include<locale.h>
 #include<conio.h>
 #include<stdlib.h>
+#include<iostream>
+#include<cstring>
+#include<string>
+
 
 main(){
 	setlocale(LC_ALL,"portuguese");
-	int sair=0,senha=0,tent_senha=0,menu=0,pesopet=0,produto=0,itens=0,vetnota[5]={0,0,0,0,0};
+	int sair=0,senha=0,tent_senha=0,menu=0,pesopet=0,produto=0,itens=0,vetnota[5]={};
 	char contcompra;
 	int banhotosa=0,totalnota=0;
 	do{	
@@ -62,7 +66,7 @@ main(){
 					printf("\n deseja continuar comprando S/N \n");
 					fflush(stdin);
 					scanf("%c",&contcompra);
-					//contcompra = toupper(contcompra);
+					contcompra=toupper(contcompra);
 					} while (contcompra!='N');
 					system("cls");
 					break;
@@ -75,7 +79,7 @@ main(){
 					system("cls");
 					printf ("\n *******             Nota Fiscal         *******");
 					printf ("\n    Produto                 itens     Valor ");					
-					printf ("\n Banho e Tosa------------- %i Kg----R$ %i",pesopet,vetnota[0]);					
+					printf ("\n Banho e Tosa------------ %i Kg----R$ %i",pesopet,vetnota[0]);					
 					printf ("\n RAÇÃO PARA GATOS 2KG----- %i-------R$ %i",vetnota[1],10*vetnota[1]);	
 					printf ("\n RAÇÃO PARA CÃES  2KG----- %i-------R$ %i",vetnota[2],12*vetnota[2]);
 					printf ("\n REMEDIO A23 ------------- %i-------R$ %i",vetnota[3],30*vetnota[3]);
