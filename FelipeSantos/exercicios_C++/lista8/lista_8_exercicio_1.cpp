@@ -15,5 +15,5 @@ main(){
 	strcpy(nome2,nome1);
 	printf("nome1 %s \nnome2 %s",nome1,nome2);
 }
-
+//
 
