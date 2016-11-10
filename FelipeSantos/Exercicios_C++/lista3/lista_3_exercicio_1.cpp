@@ -8,18 +8,20 @@ Mostrar o resultado da operação realizada. */
 
 #include<stdio.h>
 #include<locale.h>
-
+#include<string.h>
 main(){
 	setlocale(LC_ALL,"Portuguese");
 	int num1=0;
-	int num2=0;
-	int calculo=0;
-	char letra[1]; 
+	int num2=1;
+	float calculo=0;
+	char letra; 
+	
+	
 		printf("digite o primeiro numero:\n ");
-			scanf("%i",&num1);
+			scanf ("%i",&num1);
 		printf("digite o segundo numero:\n ");
-			scanf("%i",&num2);
-			
+			scanf ("%i",&num2);
+		
 			
 	printf ("\nDigite a opção de calculo ");
 		printf ("\nA - Adição");
@@ -27,10 +29,15 @@ main(){
 		printf ("\nM - Multiplicação ");
 		printf ("\nD - Divisão \n ");
 		printf ("==>");
-//			scanf ("%s",&letra[0]);
-			
-printf("\n%i - %i",num1,num2);			
-/*			switch (letra){
+		fflush(stdin);
+		scanf("%c",&letra);
+
+	
+ printf("\n%i - %i \n",num1,num2);			
+// printf("\n %c",letra);	
+// printf("\n%i - %",calculo);	
+
+		switch (letra){
 				
 			case 'A' :
 				calculo=num1+num2;
@@ -38,16 +45,16 @@ printf("\n%i - %i",num1,num2);
 			break;
 			case 'S' :
 				(calculo=num1-num2);
-		printf ("A subtração de %i + %i = %.f",num1,num2,calculo);		
+		printf ("A subtração de %i - %i = %.f",num1,num2,calculo);		
 			break;
 			case 'M' :
 				calculo=num1*num2;
-		printf ("A Multiplicação de %i + %i = %.f",num1,num2,calculo);				
+		printf ("A Multiplicação de %i * %i = %.f",num1,num2,calculo);				
 			break;
 			case 'D' :
 				calculo=num1/num2;
-		printf ("A Divisão de %i + %i = %.f",num1,num2,calculo);
+		printf ("A Divisão de %i / %i = %.f",num1,num2,calculo);
 			break;
-}*/
+}
 }
 

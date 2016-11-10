@@ -9,9 +9,8 @@ main(){
 	int soma=0,cont=0;
 	
     do{	
-    cont=1;
     if (cont%7==0){
-		printf ("o numero %i é multiplo de 7",cont);
+		printf ("\n o numero %i é multiplo de 7",cont);
 		
 //	printf ("\n soma %i ",soma);
 //	printf ("\n cont %i ",cont);

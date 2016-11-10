@@ -15,6 +15,6 @@ main(){
 		cont++;
 //	printf ("\n soma %i ",soma);
 //	printf ("\n cont %i ",cont);			
-	}while (cont<=10);
+	}while (cont<11);
 	printf ("soma %i ",soma);
 }

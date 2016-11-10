@@ -1,9 +1,12 @@
-/* Desenvolva um programa que receba seu nome a partir do teclado e mostre-o na tela escrito de trás para frente. */ 
+/* Desenvolva um programa que receba uma string a partir do teclado e a armazene em uma variável. 
+O programa deverá armazenar a string informada invertida em outra variável. Após, a inversão, 
+ mostrar o conteúdo das duas variáveis. */ 
 
 #include<stdio.h>
 #include<locale.h>
 #include<string.h>
 #include<conio.h>
+#include<stdlib.h>
 
 
 main(){
@@ -18,6 +21,11 @@ str2[cont2] = str1[cont1];
 cont2--;
 }
 str2[cont1] = '\0';
+system("cls");
+printf("%s\n",str1);
 printf("%s\n",str2);
+
 getch();
 }
+
+

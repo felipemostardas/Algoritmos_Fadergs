@@ -12,5 +12,5 @@ main (){
 		printf ("digite o consumo total de combustivel:\n");
 		scanf ("%f",&totalcomb);
 		consumo=distancia/totalcomb;
-		printf("Seu carro está fazendo: %f",consumo); printf("  KM/litro");
+		printf("Seu carro está fazendo: %.2f KM/litro",consumo);
 }
