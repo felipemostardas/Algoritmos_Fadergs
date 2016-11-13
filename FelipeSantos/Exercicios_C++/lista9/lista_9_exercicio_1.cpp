@@ -5,20 +5,34 @@
 #include<locale.h>
 #include<conio.h>
 
-//•Passagem de parâmetros por valor:
 // declarando a função
 
-void troca(int a, int b){
-int temp;
-temp=a;
-a=b;
-b=temp;
+int num_maior(int a, int b){
+	int resultado;
+	if (a==b){
+		resultado=0;
+	}
+	if (a>b){
+		resultado=1;
+	}
+	if (a<b){
+		resultado=2;
+	}
+	return 	resultado;
 }
 // iniciando o programa
 main(){
-int a=2,b=3;
-printf("Antes de chamar a funcao:\na=%d\nb=%d\n",a,b);
-troca(a,b);
-printf("Depois de chamar a funcao:\na=%d\nb=%d\n",a,b);
-getch();
+	setlocale(LC_ALL,"Portuguese");
+
+	int a=0,b=0,resultado=0;
+
+printf("1- Digite um numero inteiro ==>  ");
+scanf ("%i",&a);
+printf("2- Digite um numero inteiro ==>  ");
+scanf ("%i",&b);
+
+resultado=num_maior(a,b);
+
+printf("\nO resultado é %i",resultado);
+
 }

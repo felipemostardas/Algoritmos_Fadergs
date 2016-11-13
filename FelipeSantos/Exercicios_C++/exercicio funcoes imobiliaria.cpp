@@ -38,20 +38,24 @@ Desenvolva um programa em C, utilizando funções, com as seguintes especificações
 #include<locale.h>
 #include<conio.h>
 
-//•Passagem de parâmetros por valor:
-// declarando a função
 
-void troca(int a, int b){
-int temp;
-temp=a;
-a=b;
-b=temp;
-}
-// iniciando o programa
 main(){
-int a=2,b=3;
-printf("Antes de chamar a funcao:\na=%d\nb=%d\n",a,b);
-troca(a,b);
-printf("Depois de chamar a funcao:\na=%d\nb=%d\n",a,b);
-getch();
+	setlocale(LC_ALL,"Portuguese");
+	int opt;
+	
+	printf ("\nescolha a opcão");
+	printf ("\n1- para Compra");
+	printf ("\n2- para Locação");
+	printf ("\n3- para Sair");		
+	printf ("\n==>  ");
+	scanf("%i",opt);
+	
+	switch (opt){
+		case 1:
+			break;
+/*		case 2:
+			break;
+		case 3:
+			break;*/
+}
 }
