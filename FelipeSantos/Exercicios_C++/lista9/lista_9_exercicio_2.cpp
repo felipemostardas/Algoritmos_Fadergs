@@ -8,20 +8,21 @@ Ex. função conta_caracter(“casa”,’a’) -> 2 */
 #include<conio.h>
 #include<stdlib.h>
 
-int conta_caracter(char &str, char &letra){
-	char str[50];
-	char letra;
+int conta_caracter(char str[50], char letra[1]){
 	int x,y;
 	for(y= 0; y < strlen(str);y++){
 		
-		if (str[y]==letra){
-			x++;}
-				}
+		if (str[y] == letra[0]){
+			x++;
+		}
+	}
 		return x;
+	
 }
 
 
 main(){
+	setlocale(LC_ALL,"Portuguese");
 	char str[50];
 	char letra[1];
 	int x=0;
@@ -29,10 +30,10 @@ main(){
 	printf ("Digite uma string:  ");
 	gets (str);
 	printf ("Digite uma letra para ver quantas ocorencias tem:  ");
-	gets (letra);
+	gets(letra);
 	
 	x=conta_caracter(str,letra);
 		
-printf ("\n existem nessa string %i veses a letra %s",x,letra);	
-	
+	printf ("\n existem nessa string %i veses a letra %s ",x,letra);	
+
 }
