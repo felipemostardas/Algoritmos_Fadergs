@@ -127,6 +127,7 @@ vendas e apresente o status do caixa da empresa.
 
 #include<stdio.h>
 #include<locale.h>
+#include<stdlib.h>
 #define TAM 100
 
 // (vetor de structs) para armazenar os dados dos veículos.
@@ -142,6 +143,7 @@ typedef struct{
 	int cont_veiculo;
 }entrada_veiculo;
 
+void cadastro_veiculo (entrada_veiculo *p_veiculo);
 
 // (vetor de structs) para armazenar os dados dos clientes
 
@@ -152,19 +154,26 @@ typedef struct{
 }cliente;
 
 typedef struct{
-	veiculo ficha_cliente[TAM];
+	cliente ficha_cliente[TAM];
 	int cont_cliente;
 }entrada_cliente;
 
 void cadastro_cliente (entrada_cliente *p_cliente); 
 
-
+int codVei=1;
+int codCli=1;
 main(){
 	setlocale(LC_ALL,"Portuguese");
 	
 	entrada_cliente clientes;
 	clientes.cont_cliente=0;
+	
+	entrada_veiculo veiculos;
+	veiculos.cont_veiculo=0;
+	
 	int opt=0;
+
+do{
 	
 	printf ("*** Software revenda de veiculo ***");
 	printf ("\n  Escolha uma das opções a baixo  ");
@@ -178,10 +187,11 @@ main(){
 	printf ("\n 8- Excluir veículo");
 	printf ("\n 9- Venda");	
 	printf ("\n 10- Status Caixa");	
-	printf ("\n\n Qual opção desejada ==>");
+	printf ("\n 11- Sair do programa");	
+	printf ("\n\n Qual opção desejada ==> ");
 	
 	scanf ("%i",&opt);			
-		
+	system("cls");	
 	switch (opt){ 
 	
 	case 1:
@@ -190,9 +200,9 @@ main(){
 		
 		break;
 	case 2:
-	
-	
-	
+
+
+
 		break;
 	case 3:
 		
@@ -205,10 +215,9 @@ main(){
 	
 		break;
 	case 5:
-		
-		
-		
-		
+	// chamada para função cadastro_Veiculos	 
+	cadastro_veiculo (&veiculos);
+				
 		break;
 	case 6:
 	
@@ -239,12 +248,56 @@ main(){
 		break;
 		
 	default:printf("\n\t ==> ERRO!!");										
-	
 	}
+}while(opt!=11); 
+
 }
 
 // Função cadastrar cliente
 void cadastro_cliente (entrada_cliente *p_cliente){
+	cliente auxiliar;
+	auxiliar.codigo_cliente=codCli++;
 	
-	
+	printf ("\nCADASTRO DE CLIENTE");
+	printf ("\nCódigo do novo cliente ==> %i",auxiliar.codigo_cliente);
+	printf ("\n Nome ==> ");
+	fflush(stdin);
+	gets (auxiliar.nome_cliente);
+	printf ("\n Idade ==> ");
+	scanf ("%i",&auxiliar.idade_cliente);
+	printf ("\n Endereço ==> ");
+	fflush(stdin);
+	gets (auxiliar.endereco_cliente);			
+	printf ("\n Salário ==> ");	
+	scanf ("%f",&auxiliar.salario_cliente);	
+	p_cliente->ficha_cliente[p_cliente->cont_cliente]=auxiliar;
+	p_cliente->cont_cliente++;
 } 
+				
+
+void cadastro_veiculo (entrada_veiculo *p_veiculo){
+	veiculo auxiliar;
+	auxiliar.codigo_veiculo=codVei++;
+	
+	printf ("\nCADASTRO DE VEICULO");
+	printf ("\n Código do novo veiculo ==> %i",auxiliar.codigo_veiculo);	
+	printf ("\n Marca ==> ");
+	fflush(stdin);
+	gets(auxiliar.marca_veiculo);
+	printf ("\n Modelo ==> ");
+	gets(auxiliar.modelo_veiculo);	
+	printf ("\n Ano ==> ");
+	scanf ("%i",&auxiliar.ano_veiculo);		
+	printf ("\n Combustível (G - Gasolina ou F - Flex) ==> ");
+	fflush(stdin);
+	scanf ("%c",&auxiliar.combustivel_veiculo);			
+	printf ("\n Preço de fábrica (Sem impostos) ==> ");
+	scanf ("%f",&auxiliar.preco_fabrica_veiculo);		
+	printf ("\n Quantidade ==> ");
+	scanf ("%i",&auxiliar.quantidade_veiculo);	
+	system("cls");	
+	// atribuição do prenchimento da ficha no array
+	p_veiculo->ficha_veiculo[p_veiculo->cont_veiculo]=auxiliar;
+	p_veiculo->cont_veiculo++;	
+
+}
