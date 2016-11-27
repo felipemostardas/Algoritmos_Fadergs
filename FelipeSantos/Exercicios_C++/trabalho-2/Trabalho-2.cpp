@@ -129,52 +129,58 @@ vendas e apresente o status do caixa da empresa.
 #include<locale.h>
 #include<stdlib.h>
 #define TAM 100
+#define LIMITEVEICULOS 5
+#define LIMITECLIENTES 5
 
-// (vetor de structs) para armazenar os dados dos veículos.
-
-typedef struct{
+typedef struct{ //struct para veiculo unico
 	int codigo_veiculo, ano_veiculo, quantidade_veiculo;
 	char marca_veiculo[50], modelo_veiculo[50],combustivel_veiculo;
 	float preco_fabrica_veiculo;
 }veiculo;
 
-typedef struct{
-	veiculo ficha_veiculo[TAM];
-	int cont_veiculo;
-}entrada_veiculo;
-
-void cadastro_veiculo (entrada_veiculo *p_veiculo);
-
-// (vetor de structs) para armazenar os dados dos clientes
-
-typedef struct{
+typedef struct{ // struct para cliente unico
 	int codigo_cliente, idade_cliente;
 	char nome_cliente[TAM], endereco_cliente[TAM];
 	float salario_cliente;
 }cliente;
 
-typedef struct{
-	cliente ficha_cliente[TAM];
+typedef struct{ //struct para mandar tudo por parametro
+	veiculo ficha_veiculo[LIMITEVEICULOS];
+	int cont_veiculo;
+	int codVei;
+	cliente ficha_cliente[LIMITECLIENTES];
 	int cont_cliente;
-}entrada_cliente;
+	int codCli;
+}GLOBAL;
+//prototipação de funções
+//void cadastro_veiculo (GLOBAL *global);
+void cadastro_cliente (GLOBAL *global); 
+void menuPrincipal (GLOBAL *global);
+void exibirCliente(GLOBAL *global, int posicao);
+void exibirTodosClientes (GLOBAL *global);
+void buscaNomeCliente (GLOBAL *global, char nome[]);
+void buscaCodCliente (GLOBAL *global, int cod);
 
-void cadastro_cliente (entrada_cliente *p_cliente); 
-
-int codVei=1;
-int codCli=1;
 main(){
 	setlocale(LC_ALL,"Portuguese");
+	// criação do objeto de estrutura global
+	GLOBAL global;
+	// marcador de codigo corrido
+	global.codCli=1;
+	global.codVei=1;
+	// indice do vetor e contador de quantidade
+	global.cont_cliente=0;
+	global.cont_veiculo=0;
 	
-	entrada_cliente clientes;
-	clientes.cont_cliente=0;
-	
-	entrada_veiculo veiculos;
-	veiculos.cont_veiculo=0;
-	
-	int opt=0;
+	menuPrincipal(&global);
+}
 
-do{
-	
+// Função menu principal
+//  retorno nome função tipo da variavel e variavel
+void menuPrincipal (GLOBAL *global){
+	system("cls");
+	char buscaNome[TAM];
+	int opt=0;
 	printf ("*** Software revenda de veiculo ***");
 	printf ("\n  Escolha uma das opções a baixo  ");
 	printf ("\n\n 1- Cadastrar Cliente");
@@ -190,91 +196,103 @@ do{
 	printf ("\n 11- Sair do programa");	
 	printf ("\n\n Qual opção desejada ==> ");
 	
-	scanf ("%i",&opt);			
+	scanf ("%i",&opt);
+	fflush(stdin);			
 	system("cls");	
 	switch (opt){ 
 	
-	case 1:
-	// chamada para função cadastro_cliente	 
-	cadastro_cliente (&clientes);	
-		
+	case 1:	// chamada para função cadastro_cliente	 
+		cadastro_cliente (global);	
+		system("pause");
+		return menuPrincipal(global);		
 		break;
-	case 2:
-
-
-
+	case 2: // exibir clientes
+		exibirTodosClientes (global);
+		system("pause");
+		return menuPrincipal(global);
 		break;
 	case 3:
-		
-		
-		
+		printf ("Digite o nome que deseja localizar ==> ")
+		gets (buscaNome);
+		buscaNomeCliente (global,buscaNomeCliente);	
 		break;
 	case 4:
-	
-	
 	
 		break;
 	case 5:
 	// chamada para função cadastro_Veiculos	 
-	cadastro_veiculo (&veiculos);
 				
 		break;
 	case 6:
 	
-	
-	
 		break;
 	case 7:
-		
-		
-		
 		
 		break;
 	case 8:
 	
-	
-	
 		break;
 	case 9:
-		
-		
-		
-		
+				
 		break;
 	case 10:
 	
-	
-	
 		break;
+	case 11:
+		printf ("\n[SAINDO DO PROGRAMA]\n");
+		exit(0);
+		break;	
 		
-	default:printf("\n\t ==> ERRO!!");										
-	}
-}while(opt!=11); 
-
+	default: 
+		return menuPrincipal(global);
+		break;										
+	} 
+		
+		
 }
 
-// Função cadastrar cliente
-void cadastro_cliente (entrada_cliente *p_cliente){
-	cliente auxiliar;
-	auxiliar.codigo_cliente=codCli++;
-	
-	printf ("\nCADASTRO DE CLIENTE");
-	printf ("\nCódigo do novo cliente ==> %i",auxiliar.codigo_cliente);
-	printf ("\n Nome ==> ");
-	fflush(stdin);
-	gets (auxiliar.nome_cliente);
-	printf ("\n Idade ==> ");
-	scanf ("%i",&auxiliar.idade_cliente);
-	printf ("\n Endereço ==> ");
-	fflush(stdin);
-	gets (auxiliar.endereco_cliente);			
-	printf ("\n Salário ==> ");	
-	scanf ("%f",&auxiliar.salario_cliente);	
-	p_cliente->ficha_cliente[p_cliente->cont_cliente]=auxiliar;
-	p_cliente->cont_cliente++;
-} 
-				
 
+// Função cadastrar cliente
+void cadastro_cliente (GLOBAL *global){
+	cliente auxiliar;
+	auxiliar.codigo_cliente=global->codCli;
+
+	printf ("CADASTRO DE CLIENTE\n");
+	printf ("Código do novo cliente ==> %i \n",auxiliar.codigo_cliente);
+	printf ("Nome ==> ");
+	gets (auxiliar.nome_cliente);
+	printf ("Idade ==> ");
+	scanf ("%i",&auxiliar.idade_cliente);
+	fflush(stdin);
+	printf ("Endereço ==> ");
+	gets (auxiliar.endereco_cliente);			
+	printf ("Salário ==> ");	
+	scanf ("%f",&auxiliar.salario_cliente);
+	fflush(stdin);	
+	global->ficha_cliente[global->cont_cliente]=auxiliar;
+	global->cont_cliente++;
+	global->codCli++;
+}
+// Função exibir cliente
+void exibirTodosClientes (GLOBAL *global)
+{
+	printf ("\n-- Exibição dos clientes --\n");
+	for (int cont=0;cont<global->cont_cliente;cont++)
+	{
+		exibirCliente(global, cont);	
+	}	
+} 
+
+void exibirCliente(GLOBAL *global, int posicao)
+{
+	printf ("Código Cliente: %i\n",global->ficha_cliente[posicao].codigo_cliente);
+	printf ("Nome: %s\n",global->ficha_cliente[posicao].nome_cliente);
+	printf ("Idade: %i\n",global->ficha_cliente[posicao].idade_cliente);
+	printf ("Endereço: %s\n",global->ficha_cliente[posicao].endereco_cliente);
+	printf ("Salário: %.2f\n\n",global->ficha_cliente[posicao].salario_cliente);
+}
+				
+/*
 void cadastro_veiculo (entrada_veiculo *p_veiculo){
 	veiculo auxiliar;
 	auxiliar.codigo_veiculo=codVei++;
@@ -299,5 +317,6 @@ void cadastro_veiculo (entrada_veiculo *p_veiculo){
 	// atribuição do prenchimento da ficha no array
 	p_veiculo->ficha_veiculo[p_veiculo->cont_veiculo]=auxiliar;
 	p_veiculo->cont_veiculo++;	
-
 }
+*/
+
