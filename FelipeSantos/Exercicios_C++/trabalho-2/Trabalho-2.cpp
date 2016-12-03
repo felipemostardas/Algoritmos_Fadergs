@@ -124,10 +124,11 @@ vendas e apresente o status do caixa da empresa.
 
 			10.Status Caixa: exibir o total de vendas da concessionária. */
 
-
 #include<stdio.h>
 #include<locale.h>
 #include<stdlib.h>
+#include <string.h>
+
 #define TAM 100
 #define LIMITEVEICULOS 5
 #define LIMITECLIENTES 5
@@ -154,12 +155,20 @@ typedef struct{ //struct para mandar tudo por parametro
 }GLOBAL;
 //prototipação de funções
 //void cadastro_veiculo (GLOBAL *global);
-void cadastro_cliente (GLOBAL *global); 
 void menuPrincipal (GLOBAL *global);
+void cadastro_cliente (GLOBAL *global); 
+void cadastro_veiculo (GLOBAL *global);
 void exibirCliente(GLOBAL *global, int posicao);
+void exibirVeiculo(GLOBAL *global, int posicao);
 void exibirTodosClientes (GLOBAL *global);
-void buscaNomeCliente (GLOBAL *global, char nome[]);
-void buscaCodCliente (GLOBAL *global, int cod);
+void exibirTodosVeiculos (GLOBAL *global);
+int buscaNomeCliente (GLOBAL *global, char nome[]);
+int buscaModeloVeiculo (GLOBAL *global, char nome[]);
+int buscaCodCliente (GLOBAL *global, int cod);
+int buscaCodVeiculo (GLOBAL *global, int cod);
+void deletarCliente(GLOBAL *global, int posDeletar);
+void deletarVeiculo(GLOBAL *global, int posDeletar);
+void venderVeiculo(GLOBAL *global);
 
 main(){
 	setlocale(LC_ALL,"Portuguese");
@@ -180,12 +189,15 @@ main(){
 void menuPrincipal (GLOBAL *global){
 	system("cls");
 	char buscaNome[TAM];
+	char buscaModelo[TAM];
+	int posDeletar = 0;
+	
 	int opt=0;
 	printf ("*** Software revenda de veiculo ***");
 	printf ("\n  Escolha uma das opções a baixo  ");
-	printf ("\n\n 1- Cadastrar Cliente");
-	printf ("\n 2- Exibir cadastro de clientes");	
-	printf ("\n 3- Consultar cliente");
+	printf ("\n\n 1- Cadastrar Cliente");				
+	printf ("\n 2- Exibir cadastro de clientes");		
+	printf ("\n 3- Consultar cliente");					
 	printf ("\n 4- Excluir cliente");
 	printf ("\n 5- Cadastrar Veículo");
 	printf ("\n 6- Exibir estoque");
@@ -206,51 +218,91 @@ void menuPrincipal (GLOBAL *global){
 		system("pause");
 		return menuPrincipal(global);		
 		break;
-	case 2: // exibir clientes
+	case 2: // chamada para função exibir clientes
 		exibirTodosClientes (global);
 		system("pause");
 		return menuPrincipal(global);
 		break;
-	case 3:
-		printf ("Digite o nome que deseja localizar ==> ")
+	case 3: //chamada para função busca cliente
+		printf ("\n BUSCAR CLIENTE \n");
+		printf ("Digite o nome que deseja localizar ==> ");
 		gets (buscaNome);
-		buscaNomeCliente (global,buscaNomeCliente);	
+		buscaNomeCliente(global, buscaNome);
+		system("pause");
+		return menuPrincipal(global);
 		break;
-	case 4:
-	
+	case 4:  //Chamada para a função excluir cliente
+		printf ("\n DELETAR CLIENTE \n");
+		printf ("Digite o nome que deseja deletar ==> ");
+		gets (buscaNome);
+		//passos para deletar: 1 - Achar a posicao 2 - Deletar a posicao
+		/*Passo 1*/ posDeletar = buscaNomeCliente (global,buscaNome);
+		if (posDeletar != -1)
+		{
+			int escolhaDeletar = 0;
+			printf (" Deseja realmente deletar este cliente? 1-S 2-N \n");
+			scanf ("%d", &escolhaDeletar);
+			/*Passo 2*/ if (escolhaDeletar == 1) deletarCliente(global, posDeletar);
+		} else {printf (" Cliente não encontrado! \n");}
+		system("pause");
+		menuPrincipal(global);
 		break;
-	case 5:
-	// chamada para função cadastro_Veiculos	 
-				
+	case 5:  // chamada para função cadastro_Veiculos	 
+		cadastro_veiculo (global);	
+		system("pause");
+		return menuPrincipal(global);		
 		break;
-	case 6:
-	
+	case 6: //Chamada para a função exibir estoque
+		exibirTodosVeiculos (global);
+		system("pause");
+		return menuPrincipal(global);
 		break;
-	case 7:
-		
+	case 7:  //Chamada para a função consultar veiculo
+		printf ("\n BUSCAR VEICULO \n");
+		printf ("Digite o nome do veiculo que deseja localizar ==> ");
+		gets (buscaModelo);
+		buscaModeloVeiculo(global, buscaModelo);
+		system("pause");
+		return menuPrincipal(global);
 		break;
-	case 8:
-	
+	case 8:  //Chamada para a função excluir veiculo		
+	printf ("\n  DELETAR VEICULO  \n");
+		printf ("Digite o nome do veiculo que deseja deletar ==> ");
+		gets (buscaModelo);
+		/*Passo 1*/ posDeletar = buscaModeloVeiculo (global,buscaModelo);
+		if (posDeletar != -1)
+		{
+			int escolhaDeletar = 0;
+			printf (" Deseja realmente deletar este veiculo? 1-S 2-N \n");
+			scanf ("%d", &escolhaDeletar);
+			/*Passo 2*/ if (escolhaDeletar == 1) deletarVeiculo(global, posDeletar);
+		} else {printf (" Cliente não encontrado! \n");}
+		system("pause");
+		menuPrincipal(global);
 		break;
 	case 9:
-				
+		//Chamada para a função vender veiculo		
+		printf ("\n BUSCAR VEICULO \n");
+		printf ("Digite o nome do veiculo que deseja localizar ==> ");
+		gets (buscaModelo);
+		//	venderVeiculo (global, buscaModelo);
+		system("pause");
+		return menuPrincipal(global);			
 		break;
 	case 10:
+		//Chamada para a função status do caixa		
 	
 		break;
-	case 11:
-		printf ("\n[SAINDO DO PROGRAMA]\n");
+	case 11:  //finalizanção do programa
+		printf ("\n SAINDO DO PROGRAMA \n");
 		exit(0);
 		break;	
 		
 	default: 
 		return menuPrincipal(global);
 		break;										
-	} 
-		
-		
+	} 			
 }
-
 
 // Função cadastrar cliente
 void cadastro_cliente (GLOBAL *global){
@@ -273,16 +325,18 @@ void cadastro_cliente (GLOBAL *global){
 	global->cont_cliente++;
 	global->codCli++;
 }
-// Função exibir cliente
+
+// Função exibir todos clientes
 void exibirTodosClientes (GLOBAL *global)
 {
-	printf ("\n-- Exibição dos clientes --\n");
+	printf ("\n Exibição dos clientes \n");
 	for (int cont=0;cont<global->cont_cliente;cont++)
 	{
 		exibirCliente(global, cont);	
 	}	
 } 
 
+// Função exibir um cliente
 void exibirCliente(GLOBAL *global, int posicao)
 {
 	printf ("Código Cliente: %i\n",global->ficha_cliente[posicao].codigo_cliente);
@@ -291,32 +345,156 @@ void exibirCliente(GLOBAL *global, int posicao)
 	printf ("Endereço: %s\n",global->ficha_cliente[posicao].endereco_cliente);
 	printf ("Salário: %.2f\n\n",global->ficha_cliente[posicao].salario_cliente);
 }
-				
-/*
-void cadastro_veiculo (entrada_veiculo *p_veiculo){
-	veiculo auxiliar;
-	auxiliar.codigo_veiculo=codVei++;
-	
-	printf ("\nCADASTRO DE VEICULO");
-	printf ("\n Código do novo veiculo ==> %i",auxiliar.codigo_veiculo);	
-	printf ("\n Marca ==> ");
-	fflush(stdin);
-	gets(auxiliar.marca_veiculo);
-	printf ("\n Modelo ==> ");
-	gets(auxiliar.modelo_veiculo);	
-	printf ("\n Ano ==> ");
-	scanf ("%i",&auxiliar.ano_veiculo);		
-	printf ("\n Combustível (G - Gasolina ou F - Flex) ==> ");
-	fflush(stdin);
-	scanf ("%c",&auxiliar.combustivel_veiculo);			
-	printf ("\n Preço de fábrica (Sem impostos) ==> ");
-	scanf ("%f",&auxiliar.preco_fabrica_veiculo);		
-	printf ("\n Quantidade ==> ");
-	scanf ("%i",&auxiliar.quantidade_veiculo);	
-	system("cls");	
-	// atribuição do prenchimento da ficha no array
-	p_veiculo->ficha_veiculo[p_veiculo->cont_veiculo]=auxiliar;
-	p_veiculo->cont_veiculo++;	
-}
-*/
 
+//Função para buscar cliente por COD
+int buscaCodCliente (GLOBAL *global, int cod)
+{
+	int posicao = -1;
+	
+	for (int cont=0;cont<global->cont_cliente;cont++) 
+	{	
+		if (cod == global->ficha_cliente[cont].codigo_cliente)
+		{
+			posicao = cont; 
+		}
+	}
+	
+	return posicao; // retorna a posicao achada
+}
+
+//Função busca cliente por nome
+int buscaNomeCliente (GLOBAL *global, char buscaNomeCliente[])
+{ 
+	int posicao = -1; 
+	int achou = 0, idPeneira = 0;
+	for (int cont=0;cont<global->cont_cliente;cont++) 
+	{
+		if (!strcmpi(global->ficha_cliente[cont].nome_cliente, buscaNomeCliente))
+		{
+			exibirCliente(global, cont); 
+			posicao = cont; 
+			achou++; 
+		}
+	}
+	
+	// PENEIRA DE NOMES IGUAIS
+	if (achou > 1)
+	{
+		do {
+		printf (" Quais dos clientes mostrados acima é o correto? Informe o ID ==> ");
+		scanf ("%d", &idPeneira);
+		posicao = buscaCodCliente(global, idPeneira); 
+		if (posicao == -1) printf (" Digite um codigo existente! \n");
+		} while (posicao == -1);
+	}
+	return posicao; 
+}
+
+// Função de deletar cliente
+void deletarCliente (GLOBAL *global, int posDeletar)
+{	
+	// Loop para deletar
+	for (int cont = posDeletar; cont < global->cont_cliente; cont++)
+	{ 
+		global->ficha_cliente[cont] = global->ficha_cliente[cont+1];
+	}
+	global->cont_cliente--;
+}
+
+// Função cadastrar veiculo
+void cadastro_veiculo (GLOBAL *global){
+	veiculo auxiliar;
+	auxiliar.codigo_veiculo=global->codVei;
+
+	printf ("CADASTRO DE VEICULO\n");
+	printf ("Código do novo veiculo ==> %i \n",auxiliar.codigo_veiculo);
+	printf ("Marca do Veiculo ==> ");
+	gets (auxiliar.marca_veiculo);
+	printf ("Modelo do Veiculo ==> ");
+	gets (auxiliar.modelo_veiculo);
+	printf ("Ano ==> ");
+	scanf ("%i",&auxiliar.ano_veiculo);
+	fflush(stdin);
+	printf ("Combustível (G - Gasolina ou F - Flex) ==> ");
+	scanf ("%c",&auxiliar.combustivel_veiculo);			
+	fflush(stdin);
+	printf ("Preço de Fabrica ==> ");	
+	scanf ("%f",&auxiliar.preco_fabrica_veiculo);
+	fflush(stdin);	
+	printf ("Quantidade Veiculos ==> ");	
+	scanf ("%i",&auxiliar.quantidade_veiculo);
+	fflush(stdin);	
+	global->ficha_veiculo[global->cont_veiculo]=auxiliar;
+	global->cont_veiculo++;
+	global->codVei++;
+}
+
+// Função exibir todos veiculos (estoque)
+void exibirTodosVeiculos (GLOBAL *global)
+{
+	printf ("\n Exibição do Estoque \n");
+	for (int cont=0;cont<global->cont_veiculo;cont++)
+	{
+		exibirVeiculo(global, cont);	
+	}	
+}
+
+// Função exibir um veiculo
+void exibirVeiculo(GLOBAL *global, int posicao)
+{
+	printf ("Código Veículo: %i\n",global->ficha_veiculo[posicao].codigo_veiculo);
+	printf ("Marca: %s\n",global->ficha_veiculo[posicao].marca_veiculo);
+	printf ("Modelo: %s\n",global->ficha_veiculo[posicao].modelo_veiculo);
+	printf ("Ano: %i\n",global->ficha_veiculo[posicao].ano_veiculo);
+	printf ("Combustivel: %c\n",global->ficha_veiculo[posicao].combustivel_veiculo);
+	printf ("Quantidade: %i\n",global->ficha_veiculo[posicao].quantidade_veiculo);
+	printf ("Preço de Fabrica: %.2f\n\n",global->ficha_veiculo[posicao].preco_fabrica_veiculo);
+}
+
+//Função para buscar veiculo por COD
+int buscaCodVeiculo (GLOBAL *global, int cod)
+{
+	int posicao = -1; 
+	for (int cont=0;cont<global->cont_veiculo;cont++) 
+	{
+		if (cod == global->ficha_veiculo[cont].codigo_veiculo)
+		{
+			posicao = cont;
+		}
+	}
+	return posicao; 
+}
+
+//Função busca Veiculo por Modelo
+int buscaModeloVeiculo (GLOBAL *global, char buscaModeloVeiculo[])
+{ 
+	int posicao = -1; 
+	int achou = 0, idPeneira = 0;
+	for (int cont=0;cont<global->cont_veiculo;cont++)
+	{	
+		if (!strcmpi(global->ficha_veiculo[cont].modelo_veiculo, buscaModeloVeiculo))
+		{
+			exibirVeiculo(global, cont); 
+			posicao = cont; 
+			achou++;
+		}
+	}
+}
+
+// Função de deletar veiculo
+void deletarVeiculo (GLOBAL *global, int posDeletar)
+{
+	for (int cont = posDeletar; cont < global->cont_veiculo; cont++)
+	{ 
+		global->ficha_veiculo[cont] = global->ficha_veiculo[cont+1];
+	}
+	// Diminui quantidade de clientes
+	global->cont_veiculo--;
+}
+/*
+//Função vender Veiculo
+void venderVeiculo (GLOBAL *global)
+{ 
+   	buscaModeloVeiculo(global, buscaModelo);
+		
+}*/
