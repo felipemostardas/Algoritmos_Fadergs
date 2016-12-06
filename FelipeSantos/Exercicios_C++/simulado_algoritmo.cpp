@@ -63,7 +63,7 @@ void menuPrincipal (GLOBAL *global){
 	case '3': //pagamento
 		printf ("\n BUSCAR BOX \n");
 		printf ("Digite o box que deseja localizar ==> ");
-		scanf (nbox);
+		//scanf (nbox);
 		//pagamento (global, nbox);
 		system("pause");
 		return menuPrincipal(global);
@@ -121,7 +121,7 @@ void exibirClientes (GLOBAL *global)
 }
 
 //pagamento
-void pagamento (GLOBAL *global)
+/*void pagamento (GLOBAL *global)
 {
 	int posicao = -1;
 	
@@ -132,4 +132,4 @@ void pagamento (GLOBAL *global)
 		posicao = cont; 
 		}
 	}	
-}
+}*/

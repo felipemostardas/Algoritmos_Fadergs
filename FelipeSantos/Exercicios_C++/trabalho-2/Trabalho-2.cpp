@@ -124,14 +124,22 @@ vendas e apresente o status do caixa da empresa.
 
 			10.Status Caixa: exibir o total de vendas da concessionária. */
 
+// falta 
+// bug na venda de veiculos com homonimo
+// else do 9
+
+
+
 #include<stdio.h>
 #include<locale.h>
 #include<stdlib.h>
-#include <string.h>
+#include<string.h>
+#include<ctype.h>
 
 #define TAM 100
 #define LIMITEVEICULOS 5
 #define LIMITECLIENTES 5
+
 
 typedef struct{ //struct para veiculo unico
 	int codigo_veiculo, ano_veiculo, quantidade_veiculo;
@@ -152,9 +160,9 @@ typedef struct{ //struct para mandar tudo por parametro
 	cliente ficha_cliente[LIMITECLIENTES];
 	int cont_cliente;
 	int codCli;
+	float contaEmpresa;
 }GLOBAL;
 //prototipação de funções
-//void cadastro_veiculo (GLOBAL *global);
 void menuPrincipal (GLOBAL *global);
 void cadastro_cliente (GLOBAL *global); 
 void cadastro_veiculo (GLOBAL *global);
@@ -163,17 +171,20 @@ void exibirVeiculo(GLOBAL *global, int posicao);
 void exibirTodosClientes (GLOBAL *global);
 void exibirTodosVeiculos (GLOBAL *global);
 int buscaNomeCliente (GLOBAL *global, char nome[]);
-int buscaModeloVeiculo (GLOBAL *global, char nome[]);
+int buscaModeloVeiculo (GLOBAL *global, char buscaModelo[]);
 int buscaCodCliente (GLOBAL *global, int cod);
 int buscaCodVeiculo (GLOBAL *global, int cod);
 void deletarCliente(GLOBAL *global, int posDeletar);
 void deletarVeiculo(GLOBAL *global, int posDeletar);
-void venderVeiculo(GLOBAL *global);
+void venderVeiculo (GLOBAL *global, int posVenderCliente, int posVenderVeiculo);
+int posicaoCliente=-2;
+int posicaoVeiculo=-2;
 
 main(){
 	setlocale(LC_ALL,"Portuguese");
 	// criação do objeto de estrutura global
 	GLOBAL global;
+
 	// marcador de codigo corrido
 	global.codCli=1;
 	global.codVei=1;
@@ -181,7 +192,10 @@ main(){
 	global.cont_cliente=0;
 	global.cont_veiculo=0;
 	
+	global.contaEmpresa = 0;
+	
 	menuPrincipal(&global);
+	
 }
 
 // Função menu principal
@@ -190,8 +204,10 @@ void menuPrincipal (GLOBAL *global){
 	system("cls");
 	char buscaNome[TAM];
 	char buscaModelo[TAM];
-	int posDeletar = 0;
-	
+	int posDeletar = -1;
+	int posVenderVeiculo = -1;
+	int posVenderCliente = -1;
+
 	int opt=0;
 	printf ("*** Software revenda de veiculo ***");
 	printf ("\n  Escolha uma das opções a baixo  ");
@@ -219,15 +235,26 @@ void menuPrincipal (GLOBAL *global){
 		return menuPrincipal(global);		
 		break;
 	case 2: // chamada para função exibir clientes
+		if (global->cont_cliente>0)
+		{
 		exibirTodosClientes (global);
 		system("pause");
+		} else
+			{
+				printf ("\n\tNao existem clientes cadastrados\n\n");
+				system ("pause");
+			}
 		return menuPrincipal(global);
 		break;
 	case 3: //chamada para função busca cliente
 		printf ("\n BUSCAR CLIENTE \n");
 		printf ("Digite o nome que deseja localizar ==> ");
 		gets (buscaNome);
-		buscaNomeCliente(global, buscaNome);
+		posicaoCliente = buscaNomeCliente(global, buscaNome);
+		if (posicaoCliente==-1)
+		{
+			printf ("\n\tNome não localiazado\n\n");
+		}
 		system("pause");
 		return menuPrincipal(global);
 		break;
@@ -240,7 +267,7 @@ void menuPrincipal (GLOBAL *global){
 		if (posDeletar != -1)
 		{
 			int escolhaDeletar = 0;
-			printf (" Deseja realmente deletar este cliente? 1-S 2-N \n");
+			printf (" Deseja realmente deletar este cliente? 1-S 2-N ==> ");
 			scanf ("%d", &escolhaDeletar);
 			/*Passo 2*/ if (escolhaDeletar == 1) deletarCliente(global, posDeletar);
 		} else {printf (" Cliente não encontrado! \n");}
@@ -253,15 +280,26 @@ void menuPrincipal (GLOBAL *global){
 		return menuPrincipal(global);		
 		break;
 	case 6: //Chamada para a função exibir estoque
+		if (global->cont_veiculo>0)
+		{
 		exibirTodosVeiculos (global);
 		system("pause");
+			} else
+			{
+				printf ("\n\tNao existem veiculos cadastrados\n\n");
+				system ("pause");
+			}
 		return menuPrincipal(global);
 		break;
 	case 7:  //Chamada para a função consultar veiculo
 		printf ("\n BUSCAR VEICULO \n");
 		printf ("Digite o nome do veiculo que deseja localizar ==> ");
 		gets (buscaModelo);
-		buscaModeloVeiculo(global, buscaModelo);
+		posicaoVeiculo = buscaModeloVeiculo(global, buscaModelo);
+		if (posicaoVeiculo==-1)
+		{
+			printf ("\n\t Veiculo não localiazado\n\n");
+		}
 		system("pause");
 		return menuPrincipal(global);
 		break;
@@ -273,25 +311,47 @@ void menuPrincipal (GLOBAL *global){
 		if (posDeletar != -1)
 		{
 			int escolhaDeletar = 0;
-			printf (" Deseja realmente deletar este veiculo? 1-S 2-N \n");
+			printf (" Deseja realmente deletar este veiculo? 1-S 2-N ==> ");
 			scanf ("%d", &escolhaDeletar);
 			/*Passo 2*/ if (escolhaDeletar == 1) deletarVeiculo(global, posDeletar);
-		} else {printf (" Cliente não encontrado! \n");}
+		} else {printf (" Veiculo não encontrado! \n");}
 		system("pause");
 		menuPrincipal(global);
 		break;
 	case 9:
-		//Chamada para a função vender veiculo		
-		printf ("\n BUSCAR VEICULO \n");
-		printf ("Digite o nome do veiculo que deseja localizar ==> ");
+		//Chamada para a função vender veiculo
+		printf ("\n BUSCAR CLIENTE PARA VENDA \n");
+		printf ("Digite o nome do cliente que irá comprar ==> ");
+		gets (buscaNome);
+		posVenderCliente = buscaNomeCliente(global, buscaNome);		
+		if (posVenderCliente != -1)
+		{
+		printf ("\n BUSCAR VEÍCULO PARA VENDER\n");
+		printf ("Digite o modelo do veiculo que deseja vender ==> ");
 		gets (buscaModelo);
-		//	venderVeiculo (global, buscaModelo);
+		posVenderVeiculo = buscaModeloVeiculo(global, buscaModelo);
+		} else
+			{
+				printf (" \n\tCliente não encontrado! \n\n\n");
+				system("pause");
+				return menuPrincipal(global);
+			}
+		if (posVenderVeiculo != -1)
+		{
+			venderVeiculo (global, posVenderCliente, posVenderVeiculo);
+		}
+			else
+			{
+				printf (" \n\tModelo de veiculo não encontrado! \n\n\n");
+			}
 		system("pause");
 		return menuPrincipal(global);			
 		break;
 	case 10:
-		//Chamada para a função status do caixa		
-	
+		//status do caixa		
+		printf("Caixa atual: R$ %.2f \n",global->contaEmpresa);
+		system("pause");
+		menuPrincipal(global);
 		break;
 	case 11:  //finalizanção do programa
 		printf ("\n SAINDO DO PROGRAMA \n");
@@ -416,8 +476,12 @@ void cadastro_veiculo (GLOBAL *global){
 	scanf ("%i",&auxiliar.ano_veiculo);
 	fflush(stdin);
 	printf ("Combustível (G - Gasolina ou F - Flex) ==> ");
-	scanf ("%c",&auxiliar.combustivel_veiculo);			
+	do
+	{
+	scanf ("%c",&auxiliar.combustivel_veiculo);	
 	fflush(stdin);
+	auxiliar.combustivel_veiculo = toupper(auxiliar.combustivel_veiculo);		
+	} while (auxiliar.combustivel_veiculo != 'F' && auxiliar.combustivel_veiculo != 'G');
 	printf ("Preço de Fabrica ==> ");	
 	scanf ("%f",&auxiliar.preco_fabrica_veiculo);
 	fflush(stdin);	
@@ -466,19 +530,21 @@ int buscaCodVeiculo (GLOBAL *global, int cod)
 }
 
 //Função busca Veiculo por Modelo
-int buscaModeloVeiculo (GLOBAL *global, char buscaModeloVeiculo[])
+int buscaModeloVeiculo (GLOBAL *global, char buscaModelo[])
 { 
 	int posicao = -1; 
 	int achou = 0, idPeneira = 0;
 	for (int cont=0;cont<global->cont_veiculo;cont++)
 	{	
-		if (!strcmpi(global->ficha_veiculo[cont].modelo_veiculo, buscaModeloVeiculo))
-		{
+		if (!strcmpi(global->ficha_veiculo[cont].modelo_veiculo, buscaModelo))
+		{ 
 			exibirVeiculo(global, cont); 
 			posicao = cont; 
 			achou++;
 		}
 	}
+	
+	return posicao;
 }
 
 // Função de deletar veiculo
@@ -488,13 +554,124 @@ void deletarVeiculo (GLOBAL *global, int posDeletar)
 	{ 
 		global->ficha_veiculo[cont] = global->ficha_veiculo[cont+1];
 	}
-	// Diminui quantidade de clientes
+	// Diminui quantidade de veiculos
 	global->cont_veiculo--;
 }
-/*
+
 //Função vender Veiculo
-void venderVeiculo (GLOBAL *global)
+void venderVeiculo (GLOBAL *global, int posCliente, int posVeiculo)
 { 
-   	buscaModeloVeiculo(global, buscaModelo);
-		
-}*/
+	int totalVendaAtual = 0;
+	float ipi=0;
+	float lucro=0;
+	float precoFinal=0;
+	int escolhaCompra=0;
+	int condicaoPagamento = 0;
+	float valorEntrada=0;
+	float valorFinanciamento=0;
+	float numeroParcelas=0;
+	float prestacao=0;
+	float percentualSalario=0;
+	
+	// Vender a posicao recebida por parametro
+	
+			printf (" Como deseja pagar este veiculo? 1- À Vista 2- A Prazo ==> ");
+			scanf ("%d", &condicaoPagamento);
+			
+			// Venda a vista
+			if (condicaoPagamento == 1) 
+			{
+				printf("\n PAGAMENTO A VISTA\n");
+				
+				if (global->ficha_veiculo[posVeiculo].combustivel_veiculo == 'F')
+				{
+					ipi = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.11);
+				}
+				if (global->ficha_veiculo[posVeiculo].combustivel_veiculo == 'G')
+				{
+					ipi = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.13);	
+				}
+				
+				//finaliza venda a vista	
+			lucro = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.105);
+			precoFinal=(ipi+lucro+global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo);
+			printf ("\nO IPI é ==> %.2f",ipi);
+			printf ("\nA Margem de lucro é ==> %.2f",lucro);
+			printf ("\nO preço final de venda é ==> %.2f",precoFinal);
+			
+			printf (" \nDeseja realmente comprar este veiculo? 1-S 2-N ==> ");
+			scanf ("%d", &escolhaCompra);
+				if (escolhaCompra==1)
+				{
+					printf ("\nParabéns Veiculo comprado com Sucesso\n");
+					global->ficha_veiculo[posVeiculo].quantidade_veiculo--;
+					totalVendaAtual=precoFinal;
+				}
+					
+			}
+			
+			//venda a prazo
+		else if (condicaoPagamento == 2) 
+			{
+				printf("\n PAGAMENTO A PRAZO");
+				
+				printf("\n Qual o valor da entrada ==>");
+				scanf ("%f",&valorEntrada);
+				
+				valorFinanciamento=global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo-valorEntrada;
+				percentualSalario=global->ficha_cliente[posCliente].salario_cliente*0.30;
+				
+				printf("\n\n Valor à parcelar %.2f",valorFinanciamento);
+				printf("\n\n A capacidade de pagamento é uma mensalidade de %.2f",percentualSalario);
+								
+				printf("\n\n Em quantas parcelas gostaria de dividir 12x, 24x ou 36x==>");
+				do
+				{
+				scanf ("%f",&numeroParcelas);
+				}while (numeroParcelas!=12 && numeroParcelas!=24 && numeroParcelas!=36);
+				for(int x=0;x<=numeroParcelas;x++)
+							{
+								valorFinanciamento=valorFinanciamento*1.019;
+								//printf ("\nvalor financiamento %.2f",valorFinanciamento);
+							}
+				prestacao=(valorFinanciamento/numeroParcelas);
+				printf (" cada parcela do financiamento ficará em R$ %.2f\n",prestacao);
+				
+				//ver pq não entra no else a baixo
+				if (prestacao<=percentualSalario)
+				{
+					if (global->ficha_veiculo[posVeiculo].combustivel_veiculo == 'F')
+					{
+					ipi = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.11);
+					}
+					if (global->ficha_veiculo[posVeiculo].combustivel_veiculo == 'G')
+					{
+					ipi = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.13);	
+					}
+						
+				//finaliza venda a prazo
+			lucro = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.105);
+			precoFinal=(ipi+lucro+global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo);
+			printf ("\nO IPI é ==> %.2f",ipi);
+			printf ("\nA Margem de lucro é ==> %.2f",lucro);
+			printf ("\nO preço final de venda é ==> %.2f",precoFinal);
+			
+			printf (" \nDeseja realmente comprar este veiculo? 1-S 2-N ==> ");
+			scanf ("%d", &escolhaCompra);
+			fflush(stdin);
+					if (escolhaCompra==1)
+					{
+						printf ("\nParabéns Veiculo comprado com Sucesso\n");
+						global->ficha_veiculo[posVeiculo].quantidade_veiculo--;
+						totalVendaAtual=precoFinal;
+					}
+				} 
+				if (prestacao>percentualSalario) 
+				{
+				("\n Cliente não tem renda suficiente para o financiamento.\n o Valor maximo da prestação não pode utrapassar R$%.2f\n",percentualSalario);
+				}
+			}
+			
+	// Final > acumula a venda atual no caixa da empresa
+	global->contaEmpresa = global->contaEmpresa + totalVendaAtual;		
+}
