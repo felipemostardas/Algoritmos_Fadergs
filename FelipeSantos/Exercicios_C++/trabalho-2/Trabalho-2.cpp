@@ -123,13 +123,7 @@ vendas e apresente o status do caixa da empresa.
 					da empresa.
 
 			10.Status Caixa: exibir o total de vendas da concessionária. */
-
-// falta 
-// bug na venda de veiculos com homonimo
-// else do 9
-
-
-
+			
 #include<stdio.h>
 #include<locale.h>
 #include<stdlib.h>
@@ -443,6 +437,7 @@ int buscaNomeCliente (GLOBAL *global, char buscaNomeCliente[])
 		do {
 		printf (" Quais dos clientes mostrados acima é o correto? Informe o ID ==> ");
 		scanf ("%d", &idPeneira);
+		fflush(stdin);
 		posicao = buscaCodCliente(global, idPeneira); 
 		if (posicao == -1) printf (" Digite um codigo existente! \n");
 		} while (posicao == -1);
@@ -606,15 +601,15 @@ void venderVeiculo (GLOBAL *global, int posCliente, int posVeiculo)
 					printf ("\nParabéns Veiculo comprado com Sucesso\n");
 					global->ficha_veiculo[posVeiculo].quantidade_veiculo--;
 					totalVendaAtual=precoFinal;
+					// Final > acumula a venda atual no caixa da empresa
+					global->contaEmpresa = global->contaEmpresa + totalVendaAtual;		
 				}
-					
 			}
 			
 			//venda a prazo
 		else if (condicaoPagamento == 2) 
 			{
 				printf("\n PAGAMENTO A PRAZO");
-				
 				printf("\n Qual o valor da entrada ==>");
 				scanf ("%f",&valorEntrada);
 				
@@ -648,30 +643,28 @@ void venderVeiculo (GLOBAL *global, int posCliente, int posVeiculo)
 					{
 					ipi = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.13);	
 					}
-						
-				//finaliza venda a prazo
-			lucro = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.105);
-			precoFinal=(ipi+lucro+global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo);
-			printf ("\nO IPI é ==> %.2f",ipi);
-			printf ("\nA Margem de lucro é ==> %.2f",lucro);
-			printf ("\nO preço final de venda é ==> %.2f",precoFinal);
-			
-			printf (" \nDeseja realmente comprar este veiculo? 1-S 2-N ==> ");
-			scanf ("%d", &escolhaCompra);
-			fflush(stdin);
-					if (escolhaCompra==1)
-					{
-						printf ("\nParabéns Veiculo comprado com Sucesso\n");
-						global->ficha_veiculo[posVeiculo].quantidade_veiculo--;
-						totalVendaAtual=precoFinal;
-					}
+						//finaliza venda a prazo
+					lucro = (global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo * 0.105);
+					precoFinal=(ipi+lucro+global->ficha_veiculo[posVeiculo].preco_fabrica_veiculo);
+					printf ("\nO IPI é ==> %.2f",ipi);
+					printf ("\nA Margem de lucro é ==> %.2f",lucro);
+					printf ("\nO preço final de venda é ==> %.2f",precoFinal);
+					
+					printf (" \nDeseja realmente comprar este veiculo? 1-S 2-N ==> ");
+					scanf ("%d", &escolhaCompra);
+					fflush(stdin);
+							if (escolhaCompra==1)
+							{
+								printf ("\nParabéns Veiculo comprado com Sucesso\n");
+								global->ficha_veiculo[posVeiculo].quantidade_veiculo--;
+								totalVendaAtual=precoFinal;
+								// Final > acumula a venda atual no caixa da empresa
+								global->contaEmpresa = global->contaEmpresa + totalVendaAtual;		
+							}
 				} 
-				if (prestacao>percentualSalario) 
+				else 
 				{
-				("\n Cliente não tem renda suficiente para o financiamento.\n o Valor maximo da prestação não pode utrapassar R$%.2f\n",percentualSalario);
+				printf ("\n Cliente não tem renda suficiente para o financiamento.\n o Valor maximo da prestação não pode utrapassar R$%.2f\n",percentualSalario);
 				}
 			}
-			
-	// Final > acumula a venda atual no caixa da empresa
-	global->contaEmpresa = global->contaEmpresa + totalVendaAtual;		
 }
